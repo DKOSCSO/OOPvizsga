@@ -35,7 +35,7 @@ class Szalloda:
             if szoba.szobaszam == szobaszam:
                 for foglalas in self.foglalasok:
                     if foglalas.szoba.szobaszam == szobaszam and foglalas.datum == datum:
-                        return "A szoba már foglalt, válassz másik időpontot."
+                        return "A szoba már foglalt, válasszon másik időpontot."
 
                 foglalas = Foglalas(szoba, datum)
                 self.foglalasok.append(foglalas)
@@ -78,3 +78,35 @@ szalloda.foglalas(szobaszam=201, datum=datetime(2023, 12, 25))
 szalloda.foglalas(szobaszam=111, datum=datetime(2024, 12, 10))
 szalloda.foglalas(szobaszam=121, datum=datetime(2024, 12, 30))
 
+print("Üdvözöljük a Hotel Pythonban!")
+nev = input("Hogyan szólíthatjuk?\nKérem írja be a nevét:\n")
+print("Kedves " + nev + "\nKérjük válasszon az alábbi menüpontok közül:")
+
+while True:
+    print("\nVálasszon műveletet:")
+    print("1. Szobák megtekintése")
+    print("2. Szobák foglalása")
+    print("3. Foglalás lemondása")
+    print("4. Foglalások listázása")
+    print("0. Kilépés")
+
+    valasztas = input("Választás: ")
+
+    if valasztas == "1":
+        print("\nSzobák:")
+        for szoba in szalloda.szobak:
+            print(szoba.megtekintes())
+    elif valasztas == "2":
+        szobaszam = int(input("Adja meg a szobaszámot: "))
+        datum = datetime.strptime(input("Adja meg az érkezés dátumát (YYYY-MM-DD): "), "%Y-%m-%d")
+        print(szalloda.foglalas(szobaszam, datum))
+    elif valasztas == "3":
+        szobaszam = int(input("Adja meg a szobaszámot: "))
+        datum = datetime.strptime(input("Adja meg a lemondás dátumát (YYYY-MM-DD): "), "%Y-%m-%d")
+        print(szalloda.lemondas(szobaszam, datum))
+    elif valasztas == "4":
+        print(szalloda.listaz_foglalasok())
+    elif valasztas == "0":
+        break
+    else:
+        print("Érvénytelen választás. Kérem, válasszon újra.")
