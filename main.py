@@ -65,3 +65,16 @@ class Foglalas:
     def __init__(self, szoba, datum):
         self.szoba = szoba
         self.datum = datum
+
+szalloda = Szalloda(nev="Hotel Python")
+
+szalloda.add_szoba(EgyagyasSzoba(szobaszam=111))
+szalloda.add_szoba(KetagyasSzoba(szobaszam=121))
+szalloda.add_szoba(EgyagyasSzoba(szobaszam=201))
+
+szalloda.foglalas(szobaszam=111, datum=datetime(2023, 12, 10))
+szalloda.foglalas(szobaszam=121, datum=datetime(2023, 12, 30))
+szalloda.foglalas(szobaszam=201, datum=datetime(2023, 12, 25))
+szalloda.foglalas(szobaszam=111, datum=datetime(2024, 12, 10))
+szalloda.foglalas(szobaszam=121, datum=datetime(2024, 12, 30))
+
