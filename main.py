@@ -1,42 +1,67 @@
 from abc import ABC, abstractmethod
-from datetime import datetime
+from datetime import datetime, timedelta
 
 class Szoba(ABC):
     def __init__(self, szobaszam, ar):
         self.szobaszam = szobaszam
         self.ar = ar
+    @abstractmethod
+    def megtekintes(self):
+        pass
 class EgyagyasSzoba(Szoba):
-    def __init__(self, szobaszam, klima=True):
-        super().__init__(szobaszam)
-        self.klima = klima
-        self.ar = 8000 if klima else 7000
+    def __init__(self, szobaszam):
+        super().__init__(szobaszam, ar=80000)
+
+    def megtekintes(self):
+        return f"Egyágyas szoba #{self.szobaszam}, Ára: {self.ar} Ft"
+
 class KetagyasSzoba(Szoba):
-    def __init__(self, szobaszam, erkely=False):
-        super().__init__(szobaszam)
-        self.erkely = erkely
-        self.ar = 10000 if erkely else 9000
+    def __init__(self, szobaszam):
+        super().__init__(szobaszam, ar=100000)
+
+    def megtekintes(self):
+        return f"Kétágyas szoba #{self.szobaszam}, Ára: {self.ar} Ft"
 class Szalloda:
-    def __init__(self, nev, cim):
+    def __init__(self, nev):
         self.nev = nev
-        self.cim = cim
         self.szobak = []
         self.foglalasok = []
+
     def add_szoba(self, szoba):
         self.szobak.append(szoba)
-    def foglalas(self, szoba, kezdes_datum, vege_datum):
-        foglalas = Foglalas(szoba, kezdes_datum, vege_datum)
-        self.foglalasok.append(foglalas)
-        return foglalas
-    def ar_szamitas(self, szoba, kezdes_datum, vege_datum):
+
+    def foglalas(self, szobaszam, datum):
+        for szoba in self.szobak:
+            if szoba.szobaszam == szobaszam:
+                for foglalas in self.foglalasok:
+                    if foglalas.szoba.szobaszam == szobaszam and foglalas.datum == datum:
+                        return "A szoba már foglalt, válassz másik időpontot."
+
+                foglalas = Foglalas(szoba, datum)
+                self.foglalasok.append(foglalas)
+                return f"Foglalás sikeres. Ára: {szoba.ar} Ft."
+
+        return "Nincs ilyen szobaszám."
+
+    def lemondas(self, szobaszam, datum):
         for foglalas in self.foglalasok:
-            if foglalas.szoba == szoba:
-                if not (vege_datum <= foglalas.kezdes_datum or kezdes_datum >= foglalas.vege_datum):
-                    return f"A szoba már foglalt.  Válasszon másik dátumot."
-        for s in self.szobak:
-            if s == szoba:
-                return f"A foglalás ára: {s.ar} Ft."
+            if foglalas.szoba.szobaszam == szobaszam and foglalas.datum == datum:
+                self.foglalasok.remove(foglalas)
+                return "Foglalás lemondva."
+
+        return "Nincs ilyen foglalás"
+
+    def listaz_foglalasok(self):
+        if not self.foglalasok:
+            return "Nincsenek foglalások."
+
+        result = "Foglalások:\n"
+        for foglalas in self.foglalasok:
+            result += f"{foglalas.szoba.megtekintes()}, Dátum: {foglalas.datum}\n"
+
+        return result
+
 class Foglalas:
-    def __init__(self, szoba, kezdes_datum, vege_datum):
+    def __init__(self, szoba, datum):
         self.szoba = szoba
-        self.kezdes_datum = kezdes_datum
-        self.vege_datum = vege_datum
+        self.datum = datum
